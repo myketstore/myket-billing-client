@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ir.myket.billingclient">
+
+    <uses-permission android:name="${marketPermission}" />
+
+    <queries>
+        <package android:name="${marketApplicationId}" />
+        <intent>
+            <action android:name="${marketBindAddress}" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+    <application>
+        <activity
+            android:name="ir.myket.billingclient.util.ProxyBillingActivity"
+            android:theme="@style/Theme.Transparent" />
+
+        <meta-data
+            android:name="market_id"
+            android:value="${marketApplicationId}" />
+        <meta-data
+            android:name="market_bind_address"
+            android:value="${marketBindAddress}" />
+
+        <receiver
+            android:name="ir.myket.billingclient.util.IABReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="${marketApplicationId}.ping" />
+                <action android:name="${marketApplicationId}.purchase" />
+                <action android:name="${marketApplicationId}.getPurchase" />
+                <action android:name="${marketApplicationId}.billingSupport" />
+                <action android:name="${marketApplicationId}.skuDetail" />
+                <action android:name="${marketApplicationId}.consume" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
