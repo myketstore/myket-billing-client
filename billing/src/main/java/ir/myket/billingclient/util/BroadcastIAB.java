@@ -90,7 +90,7 @@ public class BroadcastIAB extends IAB {
             if (checkMarketHasBroadCast(versionCode)) {
                 createIABReceiver();
                 registerBroadcast();
-                trySendPingToMyket();
+                trySendPingToMarket();
                 connectListenerWeakReference = new WeakReference<>(listener);
                 return true;
             }
@@ -233,7 +233,7 @@ public class BroadcastIAB extends IAB {
         IABReceiver.addObserver(iabReceiver);
     }
 
-    private void trySendPingToMyket() {
+    private void trySendPingToMarket() {
         Intent intent = getNewIntentForBroadcast();
         intent.setAction(getAction(ping));
         context.sendBroadcast(intent);
@@ -241,8 +241,8 @@ public class BroadcastIAB extends IAB {
 
     private Intent getNewIntentForBroadcast() {
         Intent intent = new Intent();
-        String myketPackageName = marketId;
-        intent.setPackage(myketPackageName);
+        String marketPackageName = marketId;
+        intent.setPackage(marketPackageName);
         Bundle bundle = new Bundle();
         bundle.putString(PACKAGE_NAME_KEY, context.getPackageName());
         bundle.putString(SECURE_KEY, signatureBase64);
