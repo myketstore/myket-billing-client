@@ -147,7 +147,8 @@ public class BroadcastIAB extends IAB {
                 return;
             }
 
-            switch (intentAction) {
+            String action = intentAction.replace(marketId, "");
+            switch (action) {
                 case receivePingAction:
                     OnConnectListener listener = safeGetFromWeakReference(connectListenerWeakReference);
                     mSetupDone = true;
