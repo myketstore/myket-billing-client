@@ -80,6 +80,7 @@ public abstract class IAB {
                     if (mPurchaseListener != null) {
                         mPurchaseListener.onIabPurchaseFinished(result, null);
                     }
+                    return;
                 }
 
                 Purchase purchase = null;
@@ -95,7 +96,9 @@ public abstract class IAB {
                         if (mPurchaseListener != null) {
                             mPurchaseListener.onIabPurchaseFinished(result, purchase);
                         }
+                        return;
                     }
+
                     logger.logDebug("Purchase signature successfully verified.");
                 } catch (JSONException e) {
                     logger.logError("Failed to parse purchase data.");
@@ -104,6 +107,7 @@ public abstract class IAB {
                     if (mPurchaseListener != null) {
                         mPurchaseListener.onIabPurchaseFinished(result, null);
                     }
+                    return;
                 }
 
                 if (mPurchaseListener != null) {
