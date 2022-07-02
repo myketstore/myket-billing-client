@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import ir.myket.billingclient.IabHelper;
 import ir.myket.billingclient.util.communication.BillingSupportCommunication;
-import ir.myket.billingclient.util.communication.OnConnectListener;
+import ir.myket.billingclient.util.communication.OnBroadCastConnectListener;
 
 public class BroadcastIAB extends IAB {
 
@@ -64,7 +64,7 @@ public class BroadcastIAB extends IAB {
     private Bundle getPurchaseBundle;
 
     private IABReceiverCommunicator iabReceiver = null;
-    private WeakReference<OnConnectListener> connectListenerWeakReference;
+    private WeakReference<OnBroadCastConnectListener> connectListenerWeakReference;
     private WeakReference<BillingSupportCommunication> billingSupportWeakReference;
     private WeakReference<Activity> launchPurchaseActivityWeakReference;
 
@@ -75,9 +75,7 @@ public class BroadcastIAB extends IAB {
         this.signatureBase64 = mSignatureBase64 != null ? mSignatureBase64 : "secureBroadcastKey";
     }
 
-    @Override
-    public boolean connect(Context context, OnConnectListener listener) {
-
+    public boolean connect(Context context, OnBroadCastConnectListener listener) {
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(marketId, 0);
             int versionCode;
@@ -150,7 +148,7 @@ public class BroadcastIAB extends IAB {
             String action = intentAction.replace(marketId, "");
             switch (action) {
                 case receivePingAction:
-                    OnConnectListener listener = safeGetFromWeakReference(connectListenerWeakReference);
+                    OnBroadCastConnectListener listener = safeGetFromWeakReference(connectListenerWeakReference);
                     mSetupDone = true;
                     if (listener != null) {
                         listener.connected();

@@ -31,7 +31,7 @@ import java.util.List;
 
 import ir.myket.billingclient.IabHelper;
 import ir.myket.billingclient.util.communication.BillingSupportCommunication;
-import ir.myket.billingclient.util.communication.OnConnectListener;
+import ir.myket.billingclient.util.communication.OnServiceConnectListener;
 
 public class ServiceIAB extends IAB {
 
@@ -51,20 +51,17 @@ public class ServiceIAB extends IAB {
         super(logger, packageName, bindAddress, mSignatureBase64);
     }
 
-    @Override
-    public boolean connect(Context context, final OnConnectListener listener) {
-
-        // Connection to IAB service
+    public void connect(Context context, final OnServiceConnectListener listener) {
         logger.logDebug("Starting in-app billing setup.");
         mServiceConn = new ServiceConnection() {
             @Override
-            public void onServiceDisconnected(ComponentName name) {
+            public void onServiceDisconnected(final ComponentName name) {
                 logger.logDebug("Billing service disconnected.");
                 mService = null;
             }
 
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
+            public void onServiceConnected(final ComponentName name, final IBinder service) {
                 logger.logDebug("Billing service connected.");
                 if (disposed()) {
                     return;
@@ -82,14 +79,17 @@ public class ServiceIAB extends IAB {
         List<ResolveInfo> intentServices = pm.queryIntentServices(serviceIntent, 0);
         if (intentServices != null && !intentServices.isEmpty()) {
             try {
-                return context.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+                boolean result = context.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+                if (!result) {
+                    listener.couldNotConnect();
+                }
             } catch (Exception e) {
-                logger.logDebug("Billing service can't connect. result = " + false);
-                return false;
+                logger.logDebug("Billing service can't connect. result = false");
+                listener.couldNotConnect();
             }
         } else {
-            logger.logDebug("Billing service can't connect. result = " + false);
-            return false;
+            logger.logDebug("Billing service can't connect. result = false");
+            listener.couldNotConnect();
         }
     }
 

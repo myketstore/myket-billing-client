@@ -28,7 +28,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import ir.myket.billingclient.util.BroadcastIAB;
 import ir.myket.billingclient.util.IAB;
@@ -41,7 +40,8 @@ import ir.myket.billingclient.util.Security;
 import ir.myket.billingclient.util.ServiceIAB;
 import ir.myket.billingclient.util.SkuDetails;
 import ir.myket.billingclient.util.communication.BillingSupportCommunication;
-import ir.myket.billingclient.util.communication.OnConnectListener;
+import ir.myket.billingclient.util.communication.OnBroadCastConnectListener;
+import ir.myket.billingclient.util.communication.OnServiceConnectListener;
 
 
 /**
@@ -202,45 +202,40 @@ public class IabHelper {
 
         // If already set up, can't do it again.
         checkNotDisposed();
-        if (iabConnection != null) throw new IllegalStateException("IAB helper is already set up.");
-
+        if (iabConnection != null) {
+            throw new IllegalStateException("IAB helper is already set up.");
+        }
         logger.logDebug("Starting in-app billing setup.");
 
-        OnConnectListener connectListener = () -> checkBillingSupported(listener);
+        ServiceIAB serviceIAB = new ServiceIAB(logger, getMarketId(), getBindAddress(), mSignatureBase64);
 
-        String marketId = getMarketId();
-        String bindAddress = getBindAddress();
-
-        if (TextUtils.isEmpty(marketId)) {
-            throw new NoSuchElementException("marketApplicationId not set or empty");
-        } else if (TextUtils.isEmpty(bindAddress)) {
-            throw new NoSuchElementException("marketBindAddress not set or empty");
-        }
-
-        if (!isMarketInstalled(marketId) && listener != null) {
-            IabResult iabResult = new IabResult(BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE,
-                    "Market is not installed on your device.");
-            listener.onIabSetupFinished(iabResult);
-        }
-
-        IAB serviceIAB = new ServiceIAB(logger, marketId, bindAddress, mSignatureBase64);
-        boolean canConnectToService = serviceIAB.connect(mContext, connectListener);
-
-        if (canConnectToService) {
-            logger.logDebug("canConnectToService = " + canConnectToService);
-            iabConnection = serviceIAB;
-        } else {
-            IAB broadcastIAB = new BroadcastIAB(mContext, logger, marketId, bindAddress, mSignatureBase64);
-            boolean canConnectToReceiver = broadcastIAB.connect(mContext, connectListener);
-            logger.logDebug("canConnectToReceiver = " + canConnectToReceiver);
-            if (canConnectToReceiver) {
-                iabConnection = broadcastIAB;
+        OnServiceConnectListener connectListener = new OnServiceConnectListener() {
+            @Override
+            public void connected() {
+                checkBillingSupported(listener);
             }
-        }
 
-        if (iabConnection == null && listener != null) {
-            IabResult iabResult = new IabResult(BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE,
-                    "Billing service unavailable on device.");
+            @Override
+            public void couldNotConnect() {
+                startAlternativeScenario(listener);
+            }
+        };
+
+        iabConnection = serviceIAB;
+        serviceIAB.connect(mContext, connectListener);
+    }
+
+    private void startAlternativeScenario(final OnIabSetupFinishedListener listener) {
+        OnBroadCastConnectListener broadCastConnectListener = () -> checkBillingSupported(listener);
+
+        BroadcastIAB broadcastIAB = new BroadcastIAB(mContext, logger, getMarketId(), getBindAddress(), mSignatureBase64);
+        boolean canConnectToReceiver = broadcastIAB.connect(mContext, broadCastConnectListener);
+        logger.logDebug("canConnectToReceiver = " + canConnectToReceiver);
+        if (canConnectToReceiver) {
+            iabConnection = broadcastIAB;
+        } else {
+            iabConnection = null;
+            final IabResult iabResult = new IabResult(BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE, "Billing service unavailable on device.");
             listener.onIabSetupFinished(iabResult);
         }
     }

@@ -25,7 +25,7 @@ import org.json.JSONException;
 
 import ir.myket.billingclient.IabHelper;
 import ir.myket.billingclient.util.communication.BillingSupportCommunication;
-import ir.myket.billingclient.util.communication.OnConnectListener;
+import ir.myket.billingclient.util.communication.OnBroadCastConnectListener;
 
 public abstract class IAB {
 
@@ -189,8 +189,6 @@ public abstract class IAB {
         mSetupDone = false;
         mDisposed = true;
     }
-
-    public abstract boolean connect(Context context, OnConnectListener listener);
 
     public abstract void isBillingSupported(
             int apiVersion,
