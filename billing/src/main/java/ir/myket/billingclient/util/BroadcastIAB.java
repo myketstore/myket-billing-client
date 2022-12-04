@@ -1,5 +1,6 @@
 package ir.myket.billingclient.util;
 
+import static android.content.Intent.FLAG_INCLUDE_STOPPED_PACKAGES;
 import static ir.myket.billingclient.IabHelper.BILLING_RESPONSE_RESULT_OK;
 import static ir.myket.billingclient.IabHelper.IABHELPER_ERROR_BASE;
 import static ir.myket.billingclient.IabHelper.IABHELPER_MISSING_TOKEN;
@@ -238,13 +239,15 @@ public class BroadcastIAB extends IAB {
     }
 
     private Intent getNewIntentForBroadcast() {
-        Intent intent = new Intent();
-        String marketPackageName = marketId;
-        intent.setPackage(marketPackageName);
         Bundle bundle = new Bundle();
         bundle.putString(PACKAGE_NAME_KEY, context.getPackageName());
         bundle.putString(SECURE_KEY, signatureBase64);
+
+        Intent intent = new Intent();
+        String marketPackageName = marketId;
+        intent.setPackage(marketPackageName);
         intent.putExtras(bundle);
+        intent.setFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
         return intent;
     }
 
