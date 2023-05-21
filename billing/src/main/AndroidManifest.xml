@@ -15,6 +15,7 @@
     <application>
         <activity
             android:name="ir.myket.billingclient.util.ProxyBillingActivity"
+            android:exported="true"
             android:theme="@style/Theme.Transparent" />
 
         <meta-data
