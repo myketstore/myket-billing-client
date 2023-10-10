@@ -76,8 +76,13 @@ public class ServiceIAB extends IAB {
         serviceIntent.setPackage(marketId);
 
         PackageManager pm = context.getPackageManager();
-        List<ResolveInfo> intentServices = pm.queryIntentServices(serviceIntent, 0);
-        if (intentServices != null && !intentServices.isEmpty()) {
+        List<ResolveInfo> intentServices;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            intentServices = pm.queryIntentServices(serviceIntent, PackageManager.MATCH_DISABLED_COMPONENTS);
+        } else {
+            intentServices = pm.queryIntentServices(serviceIntent, 0);
+        }
+        if (!intentServices.isEmpty()) {
             try {
                 boolean result = context.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
                 if (!result) {

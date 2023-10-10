@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -274,7 +275,12 @@ public class IabHelper {
 
     private boolean isMarketInstalled(String marketId) {
         try {
-            return mContext.getPackageManager().getApplicationInfo(marketId, 0) != null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mContext.getPackageManager().getApplicationInfo(marketId, PackageManager.MATCH_DISABLED_COMPONENTS);
+            } else {
+                mContext.getPackageManager().getApplicationInfo(marketId, 0);
+            }
+            return true;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         } catch (Exception e) {

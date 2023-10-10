@@ -78,7 +78,12 @@ public class BroadcastIAB extends IAB {
 
     public boolean connect(Context context, OnBroadCastConnectListener listener) {
         try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(marketId, 0);
+            PackageInfo pInfo;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                pInfo = context.getPackageManager().getPackageInfo(marketId, PackageManager.MATCH_DISABLED_COMPONENTS);
+            } else {
+                pInfo = context.getPackageManager().getPackageInfo(marketId, 0);
+            }
             int versionCode;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
                 versionCode = (int) pInfo.getLongVersionCode();
