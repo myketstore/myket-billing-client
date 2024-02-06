@@ -21,6 +21,7 @@ import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -76,8 +77,18 @@ public class ServiceIAB extends IAB {
         serviceIntent.setPackage(marketId);
 
         PackageManager pm = context.getPackageManager();
-        List<ResolveInfo> intentServices = pm.queryIntentServices(serviceIntent, 0);
-        if (intentServices != null && !intentServices.isEmpty()) {
+        List<ResolveInfo> intentServices;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intentServices = pm.queryIntentServices(serviceIntent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DISABLED_COMPONENTS));
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intentServices = pm.queryIntentServices(serviceIntent, PackageManager.MATCH_DISABLED_COMPONENTS);
+            } else {
+                intentServices = pm.queryIntentServices(serviceIntent, 0);
+            }
+        }
+
+        if (!intentServices.isEmpty()) {
             try {
                 boolean result = context.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
                 if (!result) {

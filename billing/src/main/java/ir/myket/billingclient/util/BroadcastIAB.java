@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -78,12 +79,25 @@ public class BroadcastIAB extends IAB {
 
     public boolean connect(Context context, OnBroadCastConnectListener listener) {
         try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(marketId, 0);
+            PackageInfo packageInfo;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageInfo = context.getPackageManager().getPackageInfo(marketId, PackageManager.PackageInfoFlags.of(PackageManager.MATCH_DISABLED_COMPONENTS));
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    packageInfo = context.getPackageManager().getPackageInfo(marketId, PackageManager.MATCH_DISABLED_COMPONENTS);
+
+                } else {
+                    packageInfo = context.getPackageManager().getPackageInfo(marketId, 0);
+
+                }
+
+            }
+
             int versionCode;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                versionCode = (int) pInfo.getLongVersionCode();
+                versionCode = (int) packageInfo.getLongVersionCode();
             } else {
-                versionCode = pInfo.versionCode;
+                versionCode = packageInfo.versionCode;
             }
 
             if (checkMarketHasBroadCast(versionCode)) {
