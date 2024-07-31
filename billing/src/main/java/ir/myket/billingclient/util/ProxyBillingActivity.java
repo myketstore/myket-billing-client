@@ -5,6 +5,8 @@ import static ir.myket.billingclient.IabHelper.RESPONSE_BUY_INTENT;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
@@ -20,6 +22,10 @@ public class ProxyBillingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         iabLogger.logDebug("Launching Store billing flow");
+        setRequestedOrientation(
+                getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
+                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         try {
             purchaseBillingReceiver = (ResultReceiver) getIntent().getParcelableExtra(BILLING_RECEIVER_KEY);
             if (getIntent().getParcelableExtra(RESPONSE_BUY_INTENT) instanceof PendingIntent) {
