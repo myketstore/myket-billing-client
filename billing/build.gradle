@@ -9,6 +9,10 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
+
+        def SDK_VERSION = 1
+        buildConfigField("int", "SDK_VERSION", SDK_VERSION.toString())
+        manifestPlaceholders["sdkVersion"] = SDK_VERSION.toString()
     }
 
     buildTypes {

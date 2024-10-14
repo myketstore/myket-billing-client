@@ -23,6 +23,9 @@
         <meta-data
             android:name="market_bind_address"
             android:value="${marketBindAddress}" />
+        <meta-data
+            android:name="sdk_version"
+            android:value="${sdkVersion}" />
 
         <receiver
             android:name="ir.myket.billingclient.util.IABReceiver"

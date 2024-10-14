@@ -10,6 +10,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
+import ir.myket.billingclient.BuildConfig;
+
 public class ProxyBillingActivity extends Activity {
     public static final String BILLING_RECEIVER_KEY = "billing_receiver";
     public static final String PURCHASE_RESULT = "purchase_result";
@@ -35,6 +37,7 @@ public class ProxyBillingActivity extends Activity {
 
             } else if (getIntent().getParcelableExtra(RESPONSE_BUY_INTENT) instanceof Intent) {
                 Intent intent = getIntent().getParcelableExtra(RESPONSE_BUY_INTENT);
+                intent.putExtra(IAB.KEY_SDK_VERSION, IAB.SDK_VERSION);
                 startActivityForResult(intent, REQUEST_CODE);
             } else {
                 iabLogger.logWarn("parcelableExtra RESPONSE_BUY_INTENT is not pendingInstall or intent");
