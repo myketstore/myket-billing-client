@@ -28,6 +28,7 @@ android {
     namespace 'ir.myket.billingclient'
     buildFeatures {
         aidl true
+        buildConfig true
     }
 }
 

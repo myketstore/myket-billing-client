@@ -35,6 +35,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace 'ir.myket.billingclient.sample'
+    buildFeatures {
+        buildConfig true
+    }
 
 // Multi Store
 
