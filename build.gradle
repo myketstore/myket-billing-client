@@ -2,6 +2,9 @@
 
 buildscript {
     repositories {
+        maven {
+            url 'https://maven.myket.ir'
+        }
         google()
         mavenCentral()
     }
@@ -15,6 +18,9 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            url 'https://maven.myket.ir'
+        }
         google()
         mavenCentral()
     }
