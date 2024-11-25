@@ -41,7 +41,7 @@ android {
 
 // Multi Store
 
-//	flavorDimensions "store"
+//    flavorDimensions = ["store"]
 //
 //	productFlavors {
 //		bazaar {
