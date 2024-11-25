@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="8dp">
+
+	<ImageView
+		android:id="@+id/logo"
+		android:layout_width="32dp"
+		android:layout_height="32dp"
+		android:layout_marginTop="8dp"
+		android:src="@drawable/ic_logo_gradient"
+		android:visibility="visible"
+		app:layout_constraintBottom_toTopOf="@+id/header_divider"
+		app:layout_constraintHorizontal_bias="1"
+		app:layout_constraintHorizontal_chainStyle="packed"
+		app:layout_constraintLeft_toRightOf="@+id/logo_type"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<ImageView
+		android:id="@+id/logo_type"
+		android:layout_width="wrap_content"
+		android:layout_height="20dp"
+		android:layout_centerVertical="true"
+		android:src="@drawable/payment_logo_type"
+		app:layout_constraintBottom_toBottomOf="@+id/logo"
+		app:layout_constraintHorizontal_bias="1"
+		app:layout_constraintHorizontal_chainStyle="packed"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toLeftOf="@+id/logo"
+		app:layout_constraintTop_toTopOf="@+id/logo" />
+
+	<View
+		android:id="@+id/header_divider"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_marginTop="8dp"
+		android:background="#DADADC"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+	<TextView
+		android:id="@+id/text"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginBottom="40dp"
+		android:layout_marginTop="16dp"
+		android:gravity="center|right"
+		android:text="@string/dialog_text"
+		android:textColor="@android:color/black"
+		app:layout_constraintBottom_toTopOf="@+id/btnInstall"
+		app:layout_constraintTop_toBottomOf="@+id/header_divider" />
+
+	<Button
+		android:id="@+id/btnInstall"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="#007aff"
+		android:text="@string/dialog_botton_text"
+		android:textColor="@android:color/white"
+		android:textStyle="bold"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/text" />
+</androidx.constraintlayout.widget.ConstraintLayout>

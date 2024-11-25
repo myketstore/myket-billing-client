@@ -16,7 +16,10 @@
             android:name="ir.myket.billingclient.util.ProxyBillingActivity"
             android:exported="true"
             android:theme="@style/Theme.Transparent" />
-
+        <activity
+            android:name="ir.myket.billingclient.util.DialogActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Transparent" />
         <meta-data
             android:name="market_id"
             android:value="${marketApplicationId}" />
