@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
 
-        def SDK_VERSION = 1
+        def SDK_VERSION = 2
         buildConfigField("int", "SDK_VERSION", SDK_VERSION.toString())
         manifestPlaceholders["sdkVersion"] = SDK_VERSION.toString()
     }
