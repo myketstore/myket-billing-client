@@ -48,7 +48,7 @@ afterEvaluate {
                 artifact bundleReleaseAar
                 groupId 'com.github.myketstore'
                 artifactId 'myket-billing-client'
-                version '1.12'
+                version '1.15'
 
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
