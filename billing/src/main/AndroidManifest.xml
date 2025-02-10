@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ir.myket.billingclient">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="${marketPermission}" />
 
@@ -17,13 +16,19 @@
             android:name="ir.myket.billingclient.util.ProxyBillingActivity"
             android:exported="true"
             android:theme="@style/Theme.Transparent" />
-
+        <activity
+            android:name="ir.myket.billingclient.util.DialogActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Transparent" />
         <meta-data
             android:name="market_id"
             android:value="${marketApplicationId}" />
         <meta-data
             android:name="market_bind_address"
             android:value="${marketBindAddress}" />
+        <meta-data
+            android:name="sdk_version"
+            android:value="${sdkVersion}" />
 
         <receiver
             android:name="ir.myket.billingclient.util.IABReceiver"

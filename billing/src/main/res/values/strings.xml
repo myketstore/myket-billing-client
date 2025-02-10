@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_browser_not_found">برای نصب مایکت به سایت myket.ir مراجعه نمایید</string>
+    <string name="dialog_text">برای پرداخت در این برنامه نیاز است مایکت را روی دستگاه خود نصب کنید. برای دانلود و نصب مایکت، دکمه‌ی زیر را لمس کنید.</string>
+    <string name="dialog_botton_text">نصب مایکت</string>
+</resources>

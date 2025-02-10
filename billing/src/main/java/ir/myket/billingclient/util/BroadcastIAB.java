@@ -9,6 +9,7 @@ import static ir.myket.billingclient.IabHelper.getResponseDesc;
 import static ir.myket.billingclient.util.ProxyBillingActivity.BILLING_RECEIVER_KEY;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -53,6 +54,12 @@ public class BroadcastIAB extends IAB {
     private static final String BAZAAR_MARKET_ID = "6c02ea10518a07556a7b44e930478cb9";
     private static final int MYKET_VERSION_CODE_WITH_BROADCAST = 900;
     private static final int BAZAAR_VERSION_CODE_WITH_BROADCAST = 801301;
+
+    private static final String BAZAAR_PACKAGE_NAME = "com.farsitel.bazaar";
+    private static final String BAZAAR_PAYMENT_CLASS_NAME = "com.farsitel.bazaar.inappbilling.service.InAppBillingService";
+    private static final String MYKET_PACKAGE_NAME = "ir.mservices.market";
+    private static final String MYKET_PAYMENT_CLASS_NAME = "ir.mservices.market.receivers.InAppBillingReceiver";
+
     private final Context context;
     private final String signatureBase64;
 
@@ -262,7 +269,19 @@ public class BroadcastIAB extends IAB {
         intent.setPackage(marketPackageName);
         intent.putExtras(bundle);
         intent.setFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
+        intent.setComponent(getComponentName());
+
         return intent;
+    }
+
+    private ComponentName getComponentName() {
+        if (IabHelper.getMarketId(context).equals(MYKET_PACKAGE_NAME))
+            return new ComponentName(MYKET_PACKAGE_NAME, MYKET_PAYMENT_CLASS_NAME);
+        else if (IabHelper.getMarketId(context).equals(BAZAAR_PACKAGE_NAME)) {
+            return new ComponentName(BAZAAR_PACKAGE_NAME, BAZAAR_PAYMENT_CLASS_NAME);
+        } else {
+            return null;
+        }
     }
 
     @Override

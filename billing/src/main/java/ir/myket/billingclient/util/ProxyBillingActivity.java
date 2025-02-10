@@ -4,9 +4,18 @@ import static ir.myket.billingclient.IabHelper.RESPONSE_BUY_INTENT;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+
+import androidx.core.content.IntentSanitizer;
+
+import java.util.Objects;
+
+import ir.myket.billingclient.IabHelper;
 
 public class ProxyBillingActivity extends Activity {
     public static final String BILLING_RECEIVER_KEY = "billing_receiver";
@@ -16,10 +25,17 @@ public class ProxyBillingActivity extends Activity {
     private final IABLogger iabLogger = new IABLogger();
     private ResultReceiver purchaseBillingReceiver;
 
+    /**
+     * @noinspection Convert2MethodRef
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         iabLogger.logDebug("Launching Store billing flow");
+        setRequestedOrientation(
+                getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
+                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         try {
             purchaseBillingReceiver = (ResultReceiver) getIntent().getParcelableExtra(BILLING_RECEIVER_KEY);
             if (getIntent().getParcelableExtra(RESPONSE_BUY_INTENT) instanceof PendingIntent) {
@@ -28,7 +44,30 @@ public class ProxyBillingActivity extends Activity {
                         pendingIntent.getIntentSender(), REQUEST_CODE, new Intent(), 0, 0, 0);
 
             } else if (getIntent().getParcelableExtra(RESPONSE_BUY_INTENT) instanceof Intent) {
-                Intent intent = getIntent().getParcelableExtra(RESPONSE_BUY_INTENT);
+                Intent forward = getIntent().getParcelableExtra(RESPONSE_BUY_INTENT);
+                Objects.requireNonNull(forward).putExtra(IAB.KEY_SDK_VERSION, IAB.SDK_VERSION);
+                ComponentName componentName = forward.resolveActivity(getPackageManager());
+                forward.setComponent(componentName);
+                Intent intent = new IntentSanitizer.Builder()
+                        .allowComponent(componentName)
+                        .allowType(s -> true)
+                        .allowPackage(IabHelper.getMarketId(getApplicationContext()))
+                        .allowAction(s -> true)
+                        .allowData(uri -> true)
+                        .allowExtra("DEVELOPER_PAYLOAD", o -> o != null)
+                        .allowExtra("SKU", o -> o != null)
+                        .allowExtra("PACKAGE_NAME", o -> o != null)
+                        .allowExtra("ITEM_TYPE", o -> o != null)
+                        .allowExtra("SDK_VERSION", o -> o != null)
+                        .allowExtra("purchaseType", o -> o != null)
+                        .allowExtra("dynamicPriceToken", o -> o != null)
+                        .allowExtra("extraData", o -> o != null)
+                        .allowExtra("dealerPackageName", o -> o != null)
+                        .allowExtra("sku", o -> o != null)
+                        .allowExtra("devPayload", o -> o != null)
+                        .build()
+                        .sanitizeByFiltering(forward);
+
                 startActivityForResult(intent, REQUEST_CODE);
             } else {
                 iabLogger.logWarn("parcelableExtra RESPONSE_BUY_INTENT is not pendingInstall or intent");

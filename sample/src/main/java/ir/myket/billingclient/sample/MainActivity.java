@@ -23,6 +23,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.util.Arrays;
+import java.util.List;
+
 import ir.myket.billingclient.IabHelper;
 import ir.myket.billingclient.util.IabResult;
 import ir.myket.billingclient.util.Inventory;
@@ -268,7 +271,8 @@ public class MainActivity extends Activity {
 
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
                 Log.d(TAG, "Setup successful. Querying inventory.");
-                mHelper.queryInventoryAsync(mGotInventoryListener);
+                List<String> skuList = Arrays.asList(SKU_GAS, SKU_INFINITE_GAS, SKU_PREMIUM);
+                mHelper.queryInventoryAsync(true, skuList, mGotInventoryListener);
             }
         });
     }
