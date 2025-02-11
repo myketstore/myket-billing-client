@@ -18,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
@@ -62,6 +64,20 @@ public class DialogActivity extends Activity {
             handleMyketInstallIntent();
             dialog.dismiss();
             finish();
+        });
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
+            View bottomSheet =
+                    bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                int margin = getResources().getDimensionPixelOffset(R.dimen.bottom_dialog_horizontal_margin);
+                CoordinatorLayout.LayoutParams layoutParams =
+                        (CoordinatorLayout.LayoutParams) bottomSheet.getLayoutParams();
+                layoutParams.setMargins(margin, 0, margin, 0);
+                bottomSheet.setLayoutParams(layoutParams);
+                BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
         });
         dialog.show();
     }
