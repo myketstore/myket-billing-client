@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
 
-        def SDK_VERSION = 2
+        def SDK_VERSION = 3
         buildConfigField("int", "SDK_VERSION", SDK_VERSION.toString())
         manifestPlaceholders["sdkVersion"] = SDK_VERSION.toString()
     }
@@ -48,7 +48,7 @@ afterEvaluate {
                 artifact bundleReleaseAar
                 groupId 'com.github.myketstore'
                 artifactId 'myket-billing-client'
-                version '1.15'
+                version '1.16'
 
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
