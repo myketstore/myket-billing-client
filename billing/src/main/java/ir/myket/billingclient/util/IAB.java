@@ -26,7 +26,6 @@ import org.json.JSONException;
 import ir.myket.billingclient.BuildConfig;
 import ir.myket.billingclient.IabHelper;
 import ir.myket.billingclient.util.communication.BillingSupportCommunication;
-import ir.myket.billingclient.util.communication.OnBroadCastConnectListener;
 
 public abstract class IAB {
     public final static int SDK_VERSION = BuildConfig.SDK_VERSION;

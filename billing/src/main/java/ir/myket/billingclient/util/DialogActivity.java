@@ -38,11 +38,28 @@ import ir.myket.billingclient.BuildConfig;
 import ir.myket.billingclient.R;
 
 public class DialogActivity extends Activity {
-    private final IABLogger iabLogger = new IABLogger();
     private final static String MYKET_INSTALL_SCHEME = "https";
     private final static String MYKET_INSTALL_HOST = "paygiri.myket.ir";
     private final static String MYKET_INSTALL_PATH = "client-not-installed";
     private final static String MYKET_INSTALL_QUERY = "p";
+    private final IABLogger iabLogger = new IABLogger();
+
+    private static @NonNull JSONObject getJsonObject(Payload payload) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("aal", payload.androidApiVersion);
+            json.put("ver", payload.myketSdkVersion);
+            json.put("aid", payload.adId);
+            json.put("and", payload.androidId);
+            json.put("pk", payload.packageName);
+            json.put("sid", payload.skuId);
+            json.put("mdl", payload.model);
+            json.put("mfc", payload.manufacturer);
+        } catch (JSONException e) {
+            return new JSONObject();
+        }
+        return json;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,23 +143,6 @@ public class DialogActivity extends Activity {
                 }
             });
         });
-    }
-
-    private static @NonNull JSONObject getJsonObject(Payload payload) {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("aal", payload.androidApiVersion);
-            json.put("ver", payload.myketSdkVersion);
-            json.put("aid", payload.adId);
-            json.put("and", payload.androidId);
-            json.put("pk", payload.packageName);
-            json.put("sid", payload.skuId);
-            json.put("mdl", payload.model);
-            json.put("mfc", payload.manufacturer);
-        } catch (JSONException e) {
-            return new JSONObject();
-        }
-        return json;
     }
 
     private static class Payload {
