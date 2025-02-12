@@ -65,10 +65,12 @@ public class DialogActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         iabLogger.logDebug("Launching install myket activity");
-        setRequestedOrientation(
-                getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
-                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
-                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(
+                    getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
+                            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        }
 
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         LayoutInflater inflater = LayoutInflater.from(this);
