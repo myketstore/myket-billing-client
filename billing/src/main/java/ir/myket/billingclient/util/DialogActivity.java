@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
@@ -65,6 +66,10 @@ public class DialogActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         iabLogger.logDebug("Launching install myket activity");
+        setContentView(R.layout.activity);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            findViewById(R.id.layout).setBackgroundColor(Color.WHITE);
+        }
         setRequestedOrientation(
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
                         ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
