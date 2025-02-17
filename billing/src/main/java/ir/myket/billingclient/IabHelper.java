@@ -221,7 +221,9 @@ public class IabHelper {
         // If already set up, can't do it again.
         checkNotDisposed();
         if (iabConnection != null) {
-            throw new IllegalStateException("IAB helper is already set up.");
+            logger.logWarn("IAB helper is already set up.");
+            listener.onIabSetupFinished(new IabResult(IABHELPER_ERROR_BASE, "IAB helper is already set up."));
+            return;
         }
         logger.logDebug("Starting in-app billing setup.");
 
