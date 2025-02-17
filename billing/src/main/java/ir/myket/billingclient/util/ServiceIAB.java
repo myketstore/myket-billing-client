@@ -122,8 +122,13 @@ public class ServiceIAB extends IAB {
             // check for v3 subscriptions support
             response = mService.isBillingSupported(apiVersion, packageName, ITEM_TYPE_SUBS);
             if (response == BILLING_RESPONSE_RESULT_OK) {
-                logger.logDebug("Subscriptions AVAILABLE.");
-                mSubscriptionsSupported = true;
+                if ("ir.mservices.market".equalsIgnoreCase(marketId)) {
+                    logger.logDebug("Myket not supported subscription type");
+                    mSubscriptionsSupported = false;
+                } else {
+                    logger.logDebug("Subscriptions AVAILABLE.");
+                    mSubscriptionsSupported = true;
+                }
             } else {
                 logger.logDebug("Subscriptions NOT AVAILABLE. Response: " + response);
             }
