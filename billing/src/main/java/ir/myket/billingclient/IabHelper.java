@@ -456,6 +456,20 @@ public class IabHelper {
                 }
             }
 
+            if (iabConnection.mSubscriptionsSupported) {
+                r = queryPurchases(inv, ITEM_TYPE_SUBS);
+                if (r != BILLING_RESPONSE_RESULT_OK) {
+                    throw new IabException(r, "Error refreshing inventory (querying owned subscriptions).");
+                }
+
+                if (querySkuDetails) {
+                    r = querySkuDetails(ITEM_TYPE_SUBS, inv, moreItemSkus);
+                    if (r != BILLING_RESPONSE_RESULT_OK) {
+                        throw new IabException(r, "Error refreshing inventory (querying prices of subscriptions).");
+                    }
+                }
+            }
+
             return inv;
         } catch (RemoteException e) {
             throw new IabException(IABHELPER_REMOTE_EXCEPTION, "Remote exception while refreshing inventory.",
