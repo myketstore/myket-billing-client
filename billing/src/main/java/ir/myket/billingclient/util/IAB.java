@@ -205,10 +205,14 @@ public abstract class IAB {
 
     public abstract void consume(Context mContext, Purchase itemInfo) throws IabException;
 
-    public void flagStartAsync(String refresh_inventory) {
+    public void flagStartAsync(String message) {
     }
 
     public void flagEndAsync() {
+    }
+
+    public boolean isAsyncOperationInProgress() {
+        return false;
     }
 
     public abstract Bundle getSkuDetails(int billingVersion, String packageName, String itemType,

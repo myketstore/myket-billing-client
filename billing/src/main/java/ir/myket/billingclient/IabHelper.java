@@ -483,6 +483,11 @@ public class IabHelper {
         checkNotDisposed();
         checkSetupDone("queryInventory");
         if (iabConnection != null) {
+            if (iabConnection.isAsyncOperationInProgress()) {
+                logger.logWarn("Can't start async operation queryInventory because another async operation is in progress.");
+                listener.onQueryInventoryFinished(new IabResult(IABHELPER_ERROR_BASE, "Can't start async operation queryInventory because another async operation is in progress."), null);
+                return;
+            }
             iabConnection.flagStartAsync("refresh inventory");
         }
         (new Thread(new Runnable() {
@@ -552,19 +557,7 @@ public class IabHelper {
         checkSetupDone("consume");
         List<Purchase> purchases = new ArrayList<Purchase>();
         purchases.add(purchase);
-        consumeAsyncInternal(purchases, listener, null);
-    }
-
-    /**
-     * Same as {@link #consumeAsync(Purchase, OnConsumeFinishedListener)}, but for multiple items at once.
-     *
-     * @param purchases The list of PurchaseInfo objects representing the purchases to consume.
-     * @param listener  The listener to notify when the consumption operation finishes.
-     */
-    public void consumeAsync(List<Purchase> purchases, OnConsumeMultiFinishedListener listener) {
-        checkNotDisposed();
-        checkSetupDone("consume");
-        consumeAsyncInternal(purchases, null, listener);
+        consumeAsyncInternal(purchases, listener);
     }
 
     // Checks that setup was done; if not, throws an exception.
@@ -704,10 +697,17 @@ public class IabHelper {
     }
 
     void consumeAsyncInternal(final List<Purchase> purchases,
-                              final OnConsumeFinishedListener singleListener,
-                              final OnConsumeMultiFinishedListener multiListener) {
+                              final OnConsumeFinishedListener singleListener) {
         final Handler handler = new Handler();
-        iabConnection.flagStartAsync("consume");
+        if (iabConnection != null) {
+            if (iabConnection.isAsyncOperationInProgress()) {
+                logger.logWarn("Can't start async operation consume because another async operation is in progress.");
+                singleListener.onConsumeFinished(null, new IabResult(IABHELPER_ERROR_BASE, "Can't start async operation consume because another async operation is in progress."));
+                return;
+            }
+            iabConnection.flagStartAsync("consume");
+        }
+
         (new Thread(new Runnable() {
             public void run() {
                 final List<IabResult> results = new ArrayList<IabResult>();
@@ -726,13 +726,6 @@ public class IabHelper {
                     handler.post(new Runnable() {
                         public void run() {
                             singleListener.onConsumeFinished(purchases.get(0), results.get(0));
-                        }
-                    });
-                }
-                if (!mDisposed && multiListener != null) {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            multiListener.onConsumeMultiFinished(purchases, results);
                         }
                     });
                 }

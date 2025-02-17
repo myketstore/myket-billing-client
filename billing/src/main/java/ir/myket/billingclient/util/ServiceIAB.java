@@ -147,6 +147,12 @@ public class ServiceIAB extends IAB {
     public void launchPurchaseFlow(Context mContext, Activity act, String sku, String itemType,
                                    IabHelper.OnIabPurchaseFinishedListener listener, String extraData) {
 
+        if (isAsyncOperationInProgress()) {
+            logger.logWarn("Can't start async operation launchPurchaseFlow because another async operation is in progress.");
+            listener.onIabPurchaseFinished(new IabResult(IabHelper.IABHELPER_ERROR_BASE, "Can't start async operation launchPurchaseFlow because another async operation is in progress."), null);
+            return;
+        }
+
         flagStartAsync("launchPurchaseFlow");
         IabResult result;
         if (itemType.equals(ITEM_TYPE_SUBS) && !mSubscriptionsSupported) {
@@ -313,6 +319,11 @@ public class ServiceIAB extends IAB {
         logger.logDebug("Ending async operation: " + mAsyncOperation);
         mAsyncOperation = "";
         mAsyncInProgress = false;
+    }
+
+    @Override
+    public boolean isAsyncOperationInProgress() {
+        return mAsyncInProgress;
     }
 
     @Override
