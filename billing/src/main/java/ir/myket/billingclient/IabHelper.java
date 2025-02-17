@@ -573,7 +573,10 @@ public class IabHelper {
         }
     }
 
-    int queryPurchases(Inventory inv, String itemType) throws JSONException, RemoteException {
+    int queryPurchases(Inventory inv, String itemType) throws JSONException, RemoteException, IabException {
+        if (mContext == null) {
+            throw new IabException(new IabResult(IABHELPER_ERROR_BASE, "mContext is null!"));
+        }
         // Query purchases
         logger.logDebug("Querying owned items, item type: " + itemType);
         logger.logDebug("Package name: " + mContext.getPackageName());
@@ -641,7 +644,10 @@ public class IabHelper {
     }
 
     int querySkuDetails(String itemType, Inventory inv, List<String> moreSkus)
-            throws RemoteException, JSONException {
+            throws RemoteException, JSONException, IabException {
+        if (mContext == null) {
+            throw new IabException(new IabResult(IABHELPER_ERROR_BASE, "mContext is null!"));
+        }
         logger.logDebug("Querying SKU details.");
         if (isMyketNotInstalled()) {
             logger.logDebug("SkuDetails: Myket not installed, return empty list");
