@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
@@ -18,10 +19,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
@@ -36,16 +39,37 @@ import ir.myket.billingclient.BuildConfig;
 import ir.myket.billingclient.R;
 
 public class DialogActivity extends Activity {
-    private final IABLogger iabLogger = new IABLogger();
     private final static String MYKET_INSTALL_SCHEME = "https";
     private final static String MYKET_INSTALL_HOST = "paygiri.myket.ir";
     private final static String MYKET_INSTALL_PATH = "client-not-installed";
     private final static String MYKET_INSTALL_QUERY = "p";
+    private final IABLogger iabLogger = new IABLogger();
+
+    private static @NonNull JSONObject getJsonObject(Payload payload) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("aal", payload.androidApiVersion);
+            json.put("ver", payload.myketSdkVersion);
+            json.put("aid", payload.adId);
+            json.put("and", payload.androidId);
+            json.put("pk", payload.packageName);
+            json.put("sid", payload.skuId);
+            json.put("mdl", payload.model);
+            json.put("mfc", payload.manufacturer);
+        } catch (JSONException e) {
+            return new JSONObject();
+        }
+        return json;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         iabLogger.logDebug("Launching install myket activity");
+        setContentView(R.layout.activity);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            findViewById(R.id.layout).setBackgroundColor(Color.WHITE);
+        }
         setRequestedOrientation(
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
                         ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
@@ -62,6 +86,20 @@ public class DialogActivity extends Activity {
             handleMyketInstallIntent();
             dialog.dismiss();
             finish();
+        });
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
+            View bottomSheet =
+                    bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                int margin = getResources().getDimensionPixelOffset(R.dimen.bottom_dialog_horizontal_margin);
+                CoordinatorLayout.LayoutParams layoutParams =
+                        (CoordinatorLayout.LayoutParams) bottomSheet.getLayoutParams();
+                layoutParams.setMargins(margin, 0, margin, 0);
+                bottomSheet.setLayoutParams(layoutParams);
+                BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
         });
         dialog.show();
     }
@@ -110,23 +148,6 @@ public class DialogActivity extends Activity {
                 }
             });
         });
-    }
-
-    private static @NonNull JSONObject getJsonObject(Payload payload) {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("aal", payload.androidApiVersion);
-            json.put("ver", payload.myketSdkVersion);
-            json.put("aid", payload.adId);
-            json.put("and", payload.androidId);
-            json.put("pk", payload.packageName);
-            json.put("sid", payload.skuId);
-            json.put("mdl", payload.model);
-            json.put("mfc", payload.manufacturer);
-        } catch (JSONException e) {
-            return new JSONObject();
-        }
-        return json;
     }
 
     private static class Payload {

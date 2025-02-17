@@ -8,6 +8,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
@@ -16,6 +18,7 @@ import androidx.core.content.IntentSanitizer;
 import java.util.Objects;
 
 import ir.myket.billingclient.IabHelper;
+import ir.myket.billingclient.R;
 
 public class ProxyBillingActivity extends Activity {
     public static final String BILLING_RECEIVER_KEY = "billing_receiver";
@@ -32,6 +35,10 @@ public class ProxyBillingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         iabLogger.logDebug("Launching Store billing flow");
+        setContentView(R.layout.activity);
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            findViewById(R.id.layout).setBackgroundColor(Color.WHITE);
+        }
         setRequestedOrientation(
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
                         ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :

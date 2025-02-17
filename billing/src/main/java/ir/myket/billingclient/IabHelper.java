@@ -179,6 +179,22 @@ public class IabHelper {
             return iab_msgs[code];
     }
 
+    public static String getMarketId(Context context) {
+        ApplicationInfo applicationInfo;
+        try {
+            applicationInfo = context.getPackageManager()
+                    .getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = applicationInfo.metaData;
+            if (bundle != null) {
+                return bundle.getString(META_DATA_MARKET_ID);
+            } else {
+                return "";
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            return "";
+        }
+    }
+
     /**
      * Enables or disable debug logging through LogCat.
      */
@@ -244,22 +260,6 @@ public class IabHelper {
             iabConnection = null;
             final IabResult iabResult = new IabResult(BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE, "Billing service unavailable on device.");
             listener.onIabSetupFinished(iabResult);
-        }
-    }
-
-    public static String getMarketId(Context context) {
-        ApplicationInfo applicationInfo;
-        try {
-            applicationInfo = context.getPackageManager()
-                    .getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            Bundle bundle = applicationInfo.metaData;
-            if (bundle != null) {
-                return bundle.getString(META_DATA_MARKET_ID);
-            } else {
-                return "";
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            return "";
         }
     }
 
@@ -396,8 +396,21 @@ public class IabHelper {
             return;
         }
         checkNotDisposed();
-        checkSetupDone("launchPurchaseFlow");
-        iabConnection.launchPurchaseFlow(mContext, act, sku, itemType, listener, extraData);
+
+        if (iabConnection == null || !iabConnection.mSetupDone) {
+            logger.logDebug("launchPurchaseFlow: Setup not complete!");
+            startSetup(result -> {
+                if (result.isSuccess()) {
+                    logger.logDebug("launchPurchaseFlow: Setup finished done.");
+                    iabConnection.launchPurchaseFlow(mContext, act, sku, itemType, listener, extraData);
+                } else {
+                    logger.logError("launchPurchaseFlow: Finish setup with an error: " + result);
+                }
+            });
+        } else {
+            checkSetupDone("launchPurchaseFlow");
+            iabConnection.launchPurchaseFlow(mContext, act, sku, itemType, listener, extraData);
+        }
     }
 
     public Inventory queryInventory(boolean querySkuDetails, List<String> moreSkus) throws
