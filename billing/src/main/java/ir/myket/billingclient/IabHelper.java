@@ -405,6 +405,10 @@ public class IabHelper {
                     iabConnection.launchPurchaseFlow(mContext, act, sku, itemType, listener, extraData);
                 } else {
                     logger.logError("launchPurchaseFlow: Finish setup with an error: " + result);
+                    listener.onIabPurchaseFinished(
+                            new IabResult(BILLING_RESPONSE_RESULT_BILLING_UNAVAILABLE,
+                                    "launchPurchaseFlow: Finish setup with an error: " + result),
+                            null);
                 }
             });
         } else {
