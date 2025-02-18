@@ -345,8 +345,6 @@ public class IabHelper {
      * Returns whether subscriptions are supported.
      */
     public boolean subscriptionsSupported() {
-        checkNotDisposed();
-
         if (iabConnection != null) {
             return iabConnection.mSubscriptionsSupported;
         } else {
@@ -439,7 +437,6 @@ public class IabHelper {
      */
     public Inventory queryInventory(boolean querySkuDetails, List<String> moreItemSkus,
                                     List<String> moreSubsSkus) throws IabException {
-        checkNotDisposed();
         checkSetupDone("queryInventory");
 
         try {
@@ -547,7 +544,6 @@ public class IabHelper {
      * @throws IabException if there is a problem during consumption.
      */
     void consume(Purchase itemInfo) throws IabException {
-        checkNotDisposed();
         checkSetupDone("consume");
 
         if (!itemInfo.mItemType.equals(ITEM_TYPE_INAPP)) {
