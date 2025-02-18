@@ -234,8 +234,11 @@ public class BroadcastIAB extends IAB {
     }
 
     private void handleBillingSupport(Bundle bundle) {
-
-        mSubscriptionsSupported = bundle.getBoolean(SUBSCRIPTION_SUPPORT_KEY);
+        if ("ir.mservices.market".equalsIgnoreCase(marketId)) {
+            mSubscriptionsSupported = false;
+        } else {
+            mSubscriptionsSupported = bundle.getBoolean(SUBSCRIPTION_SUPPORT_KEY);
+        }
         BillingSupportCommunication billingListener = safeGetFromWeakReference(billingSupportWeakReference);
         if (billingListener != null) {
             billingListener.onBillingSupportResult(getResponseCodeFromBundle(bundle));
