@@ -59,6 +59,7 @@ public class ServiceIAB extends IAB {
             public void onServiceDisconnected(final ComponentName name) {
                 logger.logDebug("Billing service disconnected.");
                 mService = null;
+                listener.disconnect();
             }
 
             @Override

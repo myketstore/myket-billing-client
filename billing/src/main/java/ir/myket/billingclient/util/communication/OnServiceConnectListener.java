@@ -4,4 +4,6 @@ public interface OnServiceConnectListener {
     void connected();
 
     void couldNotConnect();
+
+    void disconnect();
 }

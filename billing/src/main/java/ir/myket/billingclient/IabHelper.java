@@ -244,6 +244,11 @@ public class IabHelper {
             public void couldNotConnect() {
                 startAlternativeScenario(listener);
             }
+
+            @Override
+            public void disconnect() {
+                iabConnection = null;
+            }
         };
 
         iabConnection = serviceIAB;
