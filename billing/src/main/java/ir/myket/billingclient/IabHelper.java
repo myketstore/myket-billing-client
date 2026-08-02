@@ -299,6 +299,13 @@ public class IabHelper {
     }
 
     private void checkBillingSupported(final OnIabSetupFinishedListener listener, boolean broadcastScenario) {
+        // This runs from a service-connection / broadcast callback, which can
+        // arrive after dispose() has already nulled mContext. Bail instead of
+        // dereferencing it: the listener belongs to a component that is gone.
+        if (mDisposed || mContext == null) {
+            logger.logDebug("checkBillingSupported: helper already disposed, ignoring.");
+            return;
+        }
         String packageName = mContext.getPackageName();
 		IAB connection = iabConnection;
 
